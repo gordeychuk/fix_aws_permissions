@@ -1,7 +1,7 @@
 # fix_aws_permissions
 
 This script is intended to use for fixing incorrect permissions on AWS bucket in Divio-based setup.
-See url for details.
+See https://github.com/what-digital/divio/issues/39 for details.
 
 How to use:
 1. Create aws permissions file on `~/.aws/credentials` like this (it's used by aws cli tool as well):

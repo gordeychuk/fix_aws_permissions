@@ -27,6 +27,8 @@ all_obj = list(bucket.objects.all())
 all_obj_len = len(all_obj)
 error_obj = []
 
+print(f'Total to be processed: {all_obj_len}\n')
+
 with ChargingBar('Processing', max=all_obj_len) as bar:
     for idx, obj in enumerate(all_obj, 1):
         acl = obj.Acl()
