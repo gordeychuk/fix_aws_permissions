@@ -1,5 +1,4 @@
-from pprint import pprint
-
+from progress.bar import ChargingBar
 import boto3
 
 BUCKET_NAME = 'your_bucket_name'
@@ -27,17 +26,17 @@ all_obj = list(bucket.objects.all())
 
 all_obj_len = len(all_obj)
 error_obj = []
-for idx, obj in enumerate(all_obj, 1):
-    print(f'{idx} / {all_obj_len}')
-    acl = obj.Acl()
 
-    _is_acl_read = is_acl_read(acl.grants)
+with ChargingBar('Processing', max=all_obj_len) as bar:
+    for idx, obj in enumerate(all_obj, 1):
+        acl = obj.Acl()
 
-    if not _is_acl_read:
-        error_obj.append(obj.key)
-        obj = s3.Object(BUCKET_NAME, obj.key)
-        pprint(obj.Acl().put(ACL='public-read'))
-        print(f'Fixed image: {obj.key}')
+        _is_acl_read = is_acl_read(acl.grants)
 
-pprint(error_obj)
-print(len(error_obj))
+        if not _is_acl_read:
+            error_obj.append(obj.key)
+            obj = s3.Object(BUCKET_NAME, obj.key)
+            obj.Acl().put(ACL='public-read')
+        bar.next()
+
+print(f'\n{len(error_obj)} images fixed')
