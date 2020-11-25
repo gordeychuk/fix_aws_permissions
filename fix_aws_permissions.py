@@ -5,6 +5,14 @@ BUCKET_NAME = 'your_bucket_name'
 PROFILE = 'stage'  # Select required profile from ~/.aws/credentials
 
 
+class CustomBar(ChargingBar):
+    suffix = '%(percent)d%% [%(index)d / %(max)d] eta: %(remaining_hours)dh'
+
+    @property
+    def remaining_hours(self):
+        return self.eta // 3600
+
+
 def is_acl_read(grants):
     all_users = 'http://acs.amazonaws.com/groups/global/AllUsers'
 
@@ -29,7 +37,7 @@ error_obj = []
 
 print(f'Total to be processed: {all_obj_len}\n')
 
-with ChargingBar('Processing', max=all_obj_len) as bar:
+with CustomBar('Processing', max=all_obj_len) as bar:
     for idx, obj in enumerate(all_obj, 1):
         acl = obj.Acl()
 
