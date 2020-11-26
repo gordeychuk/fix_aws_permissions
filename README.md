@@ -25,4 +25,4 @@ How to use:
 4. Run the script
 
 
-Tested with python 3.9.0 on macOS 11.0.1
+Tested with python 3.7.3, 3.9.0 and macOS 11.0.1, Debian 4.19
