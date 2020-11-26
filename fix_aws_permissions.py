@@ -1,3 +1,4 @@
+from botocore.exceptions import ClientError
 from progress.bar import ChargingBar
 import boto3
 
@@ -39,14 +40,17 @@ print(f'Total to be processed: {all_obj_len}\n')
 
 with CustomBar('Processing', max=all_obj_len) as bar:
     for idx, obj in enumerate(all_obj, 1):
-        acl = obj.Acl()
+        try:
+            acl = obj.Acl()
 
-        _is_acl_read = is_acl_read(acl.grants)
+            _is_acl_read = is_acl_read(acl.grants)
 
-        if not _is_acl_read:
-            error_obj.append(obj.key)
-            obj = s3.Object(BUCKET_NAME, obj.key)
-            obj.Acl().put(ACL='public-read')
+            if not _is_acl_read:
+                error_obj.append(obj.key)
+                obj = s3.Object(BUCKET_NAME, obj.key)
+                obj.Acl().put(ACL='public-read')
+        except ClientError as e:
+            print(f'Exception for file {obj.key}: {e.response}')
         bar.next()
 
 print(f'\n{len(error_obj)} images fixed')
